@@ -147,8 +147,19 @@
         },
       };
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const defaultPresetName = urlParams.get('from');
+      function extractUrlParam(str, key) {
+        const urlParams = new URLSearchParams(str)
+        return urlParams.get(key)
+      }
+      function getDefaultPresetName() {
+        const key = 'from';
+        let name = extractUrlParam(window.location.search, key);
+        if (!name) {
+          name = extractUrlParam(window.location.hash.substr(1), key)
+        }
+        return name
+      }
+      const defaultPresetName = getDefaultPresetName();
       if (defaultPresetName && defaultPresetName.indexOf('/') < 0) {
         fetch(`../s/${defaultPresetName}`, {
           headers: {

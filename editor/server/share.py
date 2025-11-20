@@ -79,7 +79,7 @@ def get(name: str):
     params['creator_info'] = {
         'hidden': False,
         'text': 'CF Error Page Editor',
-        'link': f'https://virt.moe/cloudflare-error-page/editor/?from={name}',
+        'link': f'https://virt.moe/cloudflare-error-page/editor/#from={name}',
     }
     
     if is_json:
