@@ -56,7 +56,7 @@ with open('error.html', 'w') as f:
 webbrowser.open('error.html')
 ```
 
-![Default error page](doc/default.png)
+![Default error page](https://github.com/donlon/cloudflare-error-page/blob/images/default.png?raw=true)
 
 You can also see this example [here](https://virt.moe/cloudflare-error-page/examples/default).
 
