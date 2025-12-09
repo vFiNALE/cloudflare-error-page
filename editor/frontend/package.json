@@ -1,0 +1,22 @@
+{
+  "name": "cloudflare-error-page-editor",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "format": "prettier src --write",
+    "lint": "eslint .",
+    "preview": "npm run build && vite preview"
+  },
+  "devDependencies": {
+    "html-minifier-terser": "^7.2.0",
+    "prettier": "3.7.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.6"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "ejs": "^3.1.10"
+  }
+}

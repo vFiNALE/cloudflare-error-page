@@ -69,5 +69,5 @@ if __name__ == '__main__':
     inline_css_resource(
         os.path.join(resources_folder, 'templates/error.ejs'),
         os.path.join(resources_folder, 'styles/main.css'),
-        os.path.join(root, 'editor/resources/template.ejs'),
+        os.path.join(root, 'editor/frontend/src/template.ejs'),
     )
