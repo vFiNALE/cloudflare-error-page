@@ -142,6 +142,16 @@ params = {
 
 [Demo](https://virt.moe/cloudflare-error-page/examples/working)
 
+## FAQ
+
+### How to show real user IP / Cloudflare Ray ID / data center location in the error page so that it looks more realistic?
+
+Ray ID and user IP field in the error page can be set by `ray_id` and `client_ip` properties in the `params` argument passed to the render function. The real Cloudflare Ray ID and the data center location of current request can be extracted from the `Cf-Ray` request header (e.g. `Cf-Ray: 230b030023ae2822-SJC`). Detailed description of this header can be found in [Cloudflare documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray (https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray)).
+
+To lookup the city name of the data center corresponding to the three letter code in the header, you can use a location list from [here](https://github.com/Netrvin/cloudflare-colo-list/blob/main/DC-Colos.json)
+
+The demo server runs in our website did handle these. Take a look at [this file](https://github.com/donlon/cloudflare-error-page/blob/94c3c4ddbe521dee0c9a880ef33fa7a9f0720cbe/editor/server/utils.py#L34) for reference.
+
 ## See also
 
 - [cloudflare-error-page-3th.pages.dev](https://cloudflare-error-page-3th.pages.dev/):
