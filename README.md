@@ -1,6 +1,6 @@
 # Cloudflare Error Page Generator
 
-📢 **Update (2025/12/09)**: All icons used in the error page have been fully redrawn as vector assets. These icons along with the stylesheet are also inlined into a single file of the error page, eliminating any need of hosting additional resources and ensuring better experience for you and your end users.
+📢 **Update (2025/12/09)**: All icons used in the error page have been fully redrawn as vector assets. These icons along with the stylesheet are also inlined into a single file of the error page, eliminating any need of hosting additional resources, and ensuring better experience for you and your end users.
 
 ## What does this project do?
 
@@ -22,7 +22,7 @@ Install `cloudflare-error-page` with pip.
 pip install git+https://github.com/donlon/cloudflare-error-page.git
 ```
 
-Then you can generate an error page with the `render` function. ([example.py](examples/example.py))
+Then you can generate an error page using the `render` function. ([example.py](examples/example.py))
 
 ``` Python
 import webbrowser
@@ -58,8 +58,6 @@ with open('error.html', 'w') as f:
 webbrowser.open('error.html')
 ```
 
-![Default error page](https://github.com/donlon/cloudflare-error-page/blob/images/default.png?raw=true)
-
 You can also see live demo [here](https://virt.moe/cferr/examples/default).
 
 A demo server using Flask is also available in [flask_demo.py](examples/flask_demo.py).
@@ -67,7 +65,7 @@ A demo server using Flask is also available in [flask_demo.py](examples/flask_de
 ### Node.js/NPM
 
 A Node.js package is available in [nodejs](nodejs) folder. However currently it supports only Node.js but not web browsers,
-and we plan to refactor it into a shared package that works in both environments.
+and we plan to refactor it into a shared package, so it can work in both environments.
 
 (Thanks [@junduck](https://github.com/junduck) for creating this.)
 
@@ -81,7 +79,7 @@ and we plan to refactor it into a shared package that works in both environments
 
 ### Catastrophic infrastructure failure
 
-``` JavaScript
+``` Python
 params = {
     "title": "Catastrophic infrastructure failure",
     "more_information": {
@@ -113,10 +111,10 @@ params = {
 
 ### Web server is working
 
-``` JavaScript
+``` Python
 params = {
     "title": "Web server is working",
-    "error_code": 200,
+    "error_code": "200",
     "more_information": {
         "hidden": True,
     },
@@ -147,7 +145,7 @@ params = {
 
 ### How to show real user IP / Cloudflare Ray ID / data center location in the error page so that it looks more realistic?
 
-Ray ID and user IP field in the error page can be set by `ray_id` and `client_ip` properties in the `params` argument passed to the render function. The real Cloudflare Ray ID and the data center location of current request can be extracted from the `Cf-Ray` request header (e.g. `Cf-Ray: 230b030023ae2822-SJC`). Detailed description of this header can be found in [Cloudflare documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray (https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray)).
+Ray ID and user IP field in the error page can be set by `ray_id` and `client_ip` properties in the `params` argument passed to the render function. The real Cloudflare Ray ID and the data center location of current request can be extracted from the `Cf-Ray` request header (e.g. `Cf-Ray: 230b030023ae2822-SJC`). Detailed description of this header can be found at [Cloudflare documentation](https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray).
 
 To lookup the city name of the data center corresponding to the three letter code in the header, you can use a location list from [here](https://github.com/Netrvin/cloudflare-colo-list/blob/main/DC-Colos.json)
 
@@ -155,11 +153,11 @@ The demo server runs in our website did handle these. Take a look at [this file]
 
 ## See also
 
-- [cloudflare-error-page-3th.pages.dev](https://cloudflare-error-page-3th.pages.dev/):
+- [cloudflare-error-page-3th.pages.dev](https://cloudflare-error-page-3th.pages.dev/)
 
     Error page of every HTTP status code (reload to show random page).
 
-- [oftx/cloudflare-error-page](https://github.com/oftx/cloudflare-error-page):
+- [oftx/cloudflare-error-page](https://github.com/oftx/cloudflare-error-page)
 
     React reimplementation of the original page, and can be deployed directly to Cloudflare Pages.
 
@@ -169,10 +167,10 @@ The demo server runs in our website did handle these. Take a look at [this file]
 {
     "html_title": "cloudflare.com | 500: Internal server error",
     "title": "Internal server error",
-    "error_code": 500,
-    "time": "2025-11-18 12:34:56 UTC",  // if not set, current UTC time is shown
+    "error_code": "500",
+    "time": "2025-11-18 12:34:56 UTC",  // Current UTC time will be shown if empty
 
-    // Configuration for "Visit ... for more information" line
+    // Configuration of "Visit ... for more information" line
     "more_information": {
         "hidden": false,
         "text": "cloudflare.com", 
@@ -180,7 +178,7 @@ The demo server runs in our website did handle these. Take a look at [this file]
         "for": "more information",
     },
 
-    // Configuration for the Browser/Cloudflare/Host status
+    // Configuration of the Browser/Cloudflare/Host status
     "browser_status": {
         "status": "ok", // "ok" or "error"
         "location": "You",
@@ -197,20 +195,21 @@ The demo server runs in our website did handle these. Take a look at [this file]
     },
     "host_status": {
         "status": "ok",
-        "location": "The Site",
+        "location": "Website",
         "name": "Host",
         "status_text": "Working",
         "status_text_color": "#9bca3e",
     },
-    "error_source": "host", // Position of the error indicator, can be "browser", "cloudflare", or "host"
+    // Position of the error indicator, can be "browser", "cloudflare", or "host"
+    "error_source": "host",
 
     "what_happened": "<p>There is an internal server error on Cloudflare's network.</p>",
     "what_can_i_do": "<p>Please try again in a few minutes.</p>",
 
-    "ray_id": '0123456789abcdef',  // if not set, random hex string is shown
+    "ray_id": '0123456789abcdef',  // Random hex string will be shown if empty
     "client_ip": '1.1.1.1',
 
-    // Configuration for 'Performance & security by ...' in the footer
+    // Configuration of 'Performance & security by ...' in the footer
     "perf_sec_by": {
         "text": "Cloudflare",
         "link": "https://www.cloudflare.com/",
