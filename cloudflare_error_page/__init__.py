@@ -8,6 +8,7 @@ if sys.version_info >= (3, 11):
     from typing import NotRequired
 else:
     from typing import _SpecialForm
+
     NotRequired: _SpecialForm
 
 
@@ -40,7 +41,7 @@ class ErrorPageParams(TypedDict):
     class PerfSecBy(TypedDict):
         text: NotRequired[str]
         link: NotRequired[str]
-    
+
     class CreatorInfo(TypedDict):
         hidden: NotRequired[bool]
         link: NotRequired[str]
@@ -69,12 +70,14 @@ class ErrorPageParams(TypedDict):
     creator_info: NotRequired[CreatorInfo]
 
 
-def render(params: ErrorPageParams,
-           allow_html: bool = True,
-           template: Template | None = None,
-           *args: Any,
-           **kwargs: Any) -> str:
-    '''Render a customized Cloudflare error page.
+def render(
+    params: ErrorPageParams,
+    allow_html: bool = True,
+    template: Template | None = None,
+    *args: Any,
+    **kwargs: Any,
+) -> str:
+    """Render a customized Cloudflare error page.
 
     :param params: Parameters passed to the template. Refer to the project homepage for more information.
     :param allow_html: Allow output raw HTML content from parameters. Set to False if you don't trust the source of the params.
@@ -83,7 +86,7 @@ def render(params: ErrorPageParams,
     :param args: Additional positional arguments passed to ``Template.render`` function.
     :param kwargs: Additional keyword arguments passed to ``Template.render`` function.
     :return: The rendered error page as a string.
-    '''
+    """
     if not template:
         template = base_template
 
@@ -105,6 +108,7 @@ def render(params: ErrorPageParams,
         params['what_can_i_do'] = html.escape(params.get('what_can_i_do', ''))
 
     return template.render(params=params, *args, **kwargs)
+
 
 __version__ = '0.2.0'
 __all__ = ['jinja_env', 'base_template', 'render']

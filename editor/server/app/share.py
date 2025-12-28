@@ -28,15 +28,16 @@ from .utils import (
 bp = Blueprint('share', __name__, url_prefix='/')
 bp_short = Blueprint('share_short', __name__, url_prefix='/')
 
-rand_charset = string.ascii_lowercase + string.digits 
+rand_charset = string.ascii_lowercase + string.digits
+
 
 def get_rand_name(digits=8):
     return ''.join(random.choice(rand_charset) for _ in range(digits))
 
 
 @bp.post('/create')
-@limiter.limit("20 per minute")
-@limiter.limit("500 per hour")
+@limiter.limit('20 per minute')
+@limiter.limit('500 per hour')
 def create():
     if len(request.data) > 4096:
         abort(413)
@@ -82,16 +83,14 @@ def get(name: str):
     item = db.session.query(models.Item).filter_by(name=name).first()
     if not item:
         if is_json:
-            return {
-                'status': 'notfound'
-            }
+            return {'status': 'notfound'}
         else:
             return abort(404)
     params = cast(ErrorPageParams, item.params)
     params.pop('time', None)
     params.pop('ray_id', None)
     params.pop('client_ip', None)
-    
+
     if is_json:
         return {
             'status': 'ok',
@@ -104,8 +103,7 @@ def get(name: str):
             'link': request.host_url[:-1] + url_for('editor.index') + f'#from={name}',
         }
         sanitize_page_param_links(params)
-        return render_extended_template(params=params,
-                                        allow_html=False)
+        return render_extended_template(params=params, allow_html=False)
 
 
 @bp.get('/<name>')

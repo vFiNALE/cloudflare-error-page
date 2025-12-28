@@ -9,6 +9,7 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 sys.path.append(os.path.dirname(__file__))
 from inline_resources import generate_inlined_css
 
+
 class CustomBuildHook(BuildHookInterface):
     def initialize(self, version: str, build_data: dict[str, Any]):
         generate_inlined_css()

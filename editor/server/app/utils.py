@@ -17,7 +17,7 @@ env = Environment(
     trim_blocks=True,
     lstrip_blocks=True,
 )
-template = env.from_string('''{% extends base %}
+template = env.from_string("""{% extends base %}
 
 {% block html_head %}
 {% if page_icon_url %}
@@ -45,10 +45,11 @@ template = env.from_string('''{% extends base %}
 <meta property="twitter:image" content="{{ page_image_url }}" />
 {% endif %}
 {% endblock %}
-''')
+""")
 
 
 loc_data: dict = None
+
 
 def read_loc_file(path: str):
     try:
@@ -117,11 +118,9 @@ def sanitize_page_param_links(param: ErrorPageParams):
             perf_sec_by['link'] = sanitize_user_link(link)
 
 
-def render_extended_template(params: ErrorPageParams,
-                             *args: Any,
-                             **kwargs: Any) -> str:
+def render_extended_template(params: ErrorPageParams, *args: Any, **kwargs: Any) -> str:
     fill_cf_template_params(params)
-    description = params.get('what_happened') or 'There is an internal server error on Cloudflare\'s network.'
+    description = params.get('what_happened') or "There is an internal server error on Cloudflare's network."
     description = re.sub(r'<\/?.*?>', '', description).strip()
 
     status = 'ok'
@@ -133,13 +132,15 @@ def render_extended_template(params: ErrorPageParams,
     page_icon_url = current_app.config.get('PAGE_ICON_URL', '').replace('{status}', status)
     page_icon_type = current_app.config.get('PAGE_ICON_TYPE')
     page_image_url = current_app.config.get('PAGE_IMAGE_URL', '').replace('{status}', status)
-    return render_cf_error_page(params=params,
-                                template=template,
-                                base=base_template,
-                                page_icon_url=page_icon_url,
-                                page_icon_type=page_icon_type,
-                                page_url=request.url,
-                                page_description=description,
-                                page_image_url=page_image_url,
-                                *args,
-                                **kwargs)
+    return render_cf_error_page(
+        params=params,
+        template=template,
+        base=base_template,
+        page_icon_url=page_icon_url,
+        page_icon_type=page_icon_type,
+        page_url=request.url,
+        page_description=description,
+        page_image_url=page_image_url,
+        *args,
+        **kwargs,
+    )

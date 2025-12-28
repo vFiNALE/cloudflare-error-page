@@ -46,3 +46,19 @@ path = "scripts/hatch_build.py"
 
 [tool.hatch.version]
 path = "cloudflare_error_page/__init__.py"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+include = [
+  "cloudflare_error_page/**/*.py",
+  "scripts/**/*.py",
+]
+
+[tool.ruff.lint]
+ignore = [
+  'E722', # Bare-except
+]
+
+[tool.ruff.format]
+quote-style = "single"

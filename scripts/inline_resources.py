@@ -38,8 +38,7 @@ def inline_svg_resources(css_file: str, svg_files: list[str], output_file: str):
 def inline_css_resource(original_file: str, css_file: str, output_file: str):
     css_data = read_file(css_file)
     original_data = read_file(original_file)
-    original_data = original_data.replace('<!-- @INLINE_CSS_HERE@ -->',
-                                          f'<style>{css_data}</style>')
+    original_data = original_data.replace('<!-- @INLINE_CSS_HERE@ -->', f'<style>{css_data}</style>')
     note = 'Note: This file is generated with scripts/inline_resources.py. Please do not edit manually.'
     if original_file.endswith('.ejs'):
         original_data = f'<%# {note} %>\n' + original_data
@@ -60,7 +59,7 @@ def generate_inlined_css():
             '../images/cf-icon-error.svg',
         ],
         os.path.join(resources_folder, 'styles/main.css'),
-        )
+    )
 
 
 if __name__ == '__main__':

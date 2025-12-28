@@ -1,11 +1,10 @@
 # SPDX-License-Identifier: MIT
 
 import os
+from pathlib import Path
 import secrets
 import string
-import sys
 import tomllib
-from pathlib import Path
 
 from flask import Flask, redirect, url_for
 from flask_limiter import Limiter
@@ -16,17 +15,24 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 root_dir = Path(__file__).parent.parent.parent.parent
 
+
 class Base(DeclarativeBase):
     pass
 
-db: SQLAlchemy = SQLAlchemy(model_class=Base, session_options={
-    # 'autobegin': False,
-    # 'expire_on_commit': False,
-})
+
+db: SQLAlchemy = SQLAlchemy(
+    model_class=Base,
+    session_options={
+        # 'autobegin': False,
+        # 'expire_on_commit': False,
+    },
+)
 
 limiter: Limiter = Limiter(
     key_func=get_remote_address,  # Uses client's IP address by default
 )
+static_dir: str | None = None
+
 
 def _generate_secret(length=32) -> str:
     characters = string.ascii_letters + string.digits  # A-Z, a-z, 0-9
@@ -34,10 +40,9 @@ def _generate_secret(length=32) -> str:
 
 
 def _initialize_app_config(app: Flask):
+    global static_dir
     if app.config.get('BEHIND_PROXY', True):
-        app.wsgi_app = ProxyFix(
-            app.wsgi_app, x_for=1, x_proto=1
-        )
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     secret_key = app.config.get('SECRET_KEY', '')
     if secret_key:
         app.secret_key = secret_key
@@ -45,12 +50,14 @@ def _initialize_app_config(app: Flask):
         app.logger.info('Using generated secret')
         app.secret_key = _generate_secret()
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = app.config.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///example.db')
-    if app.config["SQLALCHEMY_DATABASE_URI"].startswith('sqlite'):
-        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///example.db')
+    if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
             'isolation_level': 'SERIALIZABLE',
             # "execution_options": {"autobegin": False}
         }
+    static_dir = os.path.join(app.instance_path, app.config.get('STATIC_DIR', '../../web/dist'))
+    app.logger.info(f'Static directory: {static_dir}')
 
 
 def create_app(test_config=None) -> Flask:
@@ -60,16 +67,12 @@ def create_app(test_config=None) -> Flask:
         os.makedirs(instance_path, exist_ok=True)
         print(f'App instance path: {instance_path}')
 
-    app = Flask(__name__,
-        instance_path=instance_path,
-        instance_relative_config=True
-    )
-    app.config.from_file("config.toml", load=tomllib.load, text=False)
+    app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
+    app.config.from_file('config.toml', load=tomllib.load, text=False)
     _initialize_app_config(app)
 
-
-    from . import utils
-    from . import models
+    from . import utils  # noqa: F401
+    from . import models  # noqa: F401
     from . import examples
     from . import editor
     from . import share
