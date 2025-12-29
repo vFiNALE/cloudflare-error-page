@@ -1,6 +1,10 @@
-# To build docker image:
+# ===================================
+# Dockerfile for the editor server
+# 
+# Run the following commands to build Docker image:
 #   cd ..
 #   docker build -t cferr-editor:latest -f editor/editor.dockerfile .
+# ===================================
 
 # =========================
 # Stage 1 — Build frontend
@@ -16,9 +20,7 @@ RUN cd /work/javascript && npm ci && \
     cd /work/editor/web && yarn install
 
 # Copy source and build
-COPY ["editor/web/", "./editor/web"]
-COPY ["resources/", "./resources"]
-COPY ["javascript/", "./javascript"]
+COPY . .
 RUN cd /work/javascript && npm run build && \
     cd /work/editor/web && yarn add ../../javascript && yarn build
 
@@ -29,15 +31,18 @@ FROM python:3.14-alpine AS backend-builder
 
 WORKDIR /work
 
+# Disable bytecode to reduce image size
+ENV PYTHONDONTWRITEBYTECODE=1
+# Don't save cache
+ENV PIP_NO_CACHE_DIR=true
+# Don't warn on root user action
+ENV PIP_ROOT_USER_ACTION=ignore
+
 # Install dependencies first (better caching)
 RUN pip install hatch
 
 # Copy source and build
-COPY ["cloudflare_error_page/", "./cloudflare_error_page"]
-COPY ["editor/server/", "./editor/server"]
-COPY ["resources/", "./resources"]
-COPY ["scripts/", "./scripts"]
-COPY ["pyproject.toml", "README.md", "LICENSE.txt", "./"]
+COPY . .
 COPY --from=frontend-builder /work/editor/web/dist ./web/dist
 
 RUN hatch build -t wheel && \
@@ -50,13 +55,19 @@ FROM python:3.14-alpine
 
 WORKDIR /app
 
+# Disable bytecode to reduce image size
+ENV PYTHONDONTWRITEBYTECODE=1
+# Don't save cache
+ENV PIP_NO_CACHE_DIR=true
+# Don't warn on root user action
+ENV PIP_ROOT_USER_ACTION=ignore
+
 # Install some dependencies first (better caching)
 RUN pip install gunicorn Flask Flask-Limiter Flask-SqlAlchemy
 
 # Copy only the built artifacts from the previous stages
 COPY --from=frontend-builder /work/editor/web/dist ./web/dist
-COPY --from=backend-builder /work/dist/*.whl ./packages/
-COPY --from=backend-builder /work/editor/server/dist/*.whl ./packages/
+COPY --from=backend-builder /work/dist/*.whl /work/editor/server/dist/*.whl ./packages/
 
 # Install packages
 RUN sh -c 'pip install ./packages/*.whl'

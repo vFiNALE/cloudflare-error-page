@@ -9,3 +9,6 @@ dist/
 __pycache__/
 .ruff_cache/
 instance/
+
+*.tgz
+*.log
